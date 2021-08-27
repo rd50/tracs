@@ -106,9 +106,9 @@ TH1D *H1DConvolution( TH1D *htf , TH1D *htct , Double_t Cend , int tid) {
    std::cout << "test1" << std::endl;
    //The convoluted response to the TCT signal is going to be another histogram sized similar to htct
    //Int_t Ntf = htf->GetNbinsX() , Ntct = htct->GetNbinsX();
-   //Int_t Ntf = htf->GetNbinsX();
-   TH1D *nhtf = (TH1D *) htf->Clone();
-   int Ntf;
+   Int_t Ntf = htf->GetNbinsX();
+   //TH1D *nhtf = (TH1D *) htf->Clone();
+   //int Ntf;
    std::cout << "test2" << std::endl;
    Int_t Ntct = htct->GetNbinsX();
    
@@ -123,18 +123,22 @@ TH1D *H1DConvolution( TH1D *htf , TH1D *htct , Double_t Cend , int tid) {
    gPad->Print( "hgcontrol.pdf[" ) ; gPad->Print( "hgcontrol.pdf" );
    #endif
    
-   for ( Int_t i=1 ; i<=2*Ntct ; i++ ) { 
+   for ( Int_t i=1 ; i<=2*Ntct ; i++ )
+   { 
           
      //Create a shifted histogram version of the inverse
      hg->Reset();
      //for (Int_t j=TMath::Nint(-0.5*Ntf); j<= TMath::Nint(0.5*Ntf) ; j++) hg->SetBinContent( i-j , hinv->GetBinContent( j+TMath::Nint(0.5*Ntf) ) );  
-     if ( i<=Ntf ) {
+     if ( i<=Ntf )
+     {
        //Histogram is shifting in from the left
        for (Int_t j=1; j<=i ; j++) hg->SetBinContent( j , hinv->GetBinContent( Ntf-i+j ) );
-     } else {
+     } else
+     {
        //Histogram is shifting out. Leaving from the right
-       Int_t cont=1 ;
-       for (Int_t j=i-Ntf+1; j<=2*Ntf ; j++) {
+       Int_t cont=1;
+       for (Int_t j=i-Ntf+1; j<=2*Ntf ; j++) 
+       {
          hg->SetBinContent( j , hinv->GetBinContent( cont ) );
 	 cont++;
        }

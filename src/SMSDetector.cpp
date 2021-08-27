@@ -117,9 +117,11 @@ void SMSDetector::set_voltages(double v_bias, double v_depletion)
 	// neff defined in F/microns
 	//original only taking depth of the detector (case not depleted is ignored): _f_poisson = ((_bulk_type== 'p') ? +1.0 : -1.0)*(-2.0*v_depletion)/(_depth*_depth);
 
-	if (_fluence == 0){
+	if (_fluence == 0)
+	{
 
-		if (_depleted){//Detector is depleted
+		if (_depleted)
+		{//Detector is depleted
 			_depletion_width = _depth;
 			_f_poisson = ((_bulk_type== 'p') ? +1.0 : -1.0)*(-2.0*_vdep)/(_depth*_depth);
 			std::cout << "fp depleted: " << _f_poisson << std::endl;
@@ -127,19 +129,19 @@ void SMSDetector::set_voltages(double v_bias, double v_depletion)
 
 		}
 
-		else{//Detector is not depleted
+		else
+		{//Detector is not depleted
 			_depletion_width = _depth * sqrt((abs(_v_strips-_v_backplane))/_vdep);
 			_f_poisson = ((_bulk_type== 'p') ? +1.0 : -1.0)*(-2.0*_v_bias)/(_depletion_width * _depletion_width);
 			std::cout << "fp NO depleted: " << _f_poisson << std::endl;
 			std::cout << "Depletion Width: " << _depletion_width << std::endl;
 
-			}
+		}
 	}
 	//if fluence > 0, parameters are taken in the constructor inicialization list, coming from the config file
-	if (_fluence > 0){
-
+	if (_fluence > 0)
+	{
 		_depletion_width = _neff_param[7] - _neff_param[4];
-
 	}
 
 }
@@ -226,7 +228,6 @@ void SMSDetector::solve_d_u()
        
 		_trapping_time = std::numeric_limits<double>::max();
 	}
-
 	else
 		//If YES Irrad OR NO depleted, charge distribution is not a constant. Parameters from steering file of from above if non-depleted.
 	{
@@ -269,7 +270,6 @@ void SMSDetector::solve_d_u()
  */
 void SMSDetector::solve_w_f_grad()
 {
-
 	_L_g.u = _w_u;
 	solve(_a_g == _L_g, _w_f_grad);
 	// Change sign E = - grad(u)
@@ -305,10 +305,18 @@ bool SMSDetector::is_out(const std::array< double,2> &x)
 bool SMSDetector::is_out_dep(const std::array< double,2> &x)
 {
 	bool out = true;
+	//double deltaXmin = std::fabs(x[0]-_x_min);
+	//double deltaXmax = std::fabs(x[0]-_x_max);
+	//double deltaYmin = std::fabs(x[1]-_y_min);
+	//double deltaYmax = std::fabs(x[1]-_depth);
 	if ( (x[0] > _x_min) && (x[0] < _x_max) && (x[1] > _y_min) && (x[1] < _depth) )
 	{
 		out = false;
 	}
+	/*if(deltaXmax < 1e-3 || deltaXmin < 1e-3 || deltaYmin < 1e-3 || deltaYmax < 1e-3)
+	{
+		out = true;
+	}*/
 	return out;
 }
 
