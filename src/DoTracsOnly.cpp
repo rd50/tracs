@@ -164,8 +164,10 @@ int main( int argc, char *argv[]) {
 
 
 	//Current to rc array of TH1D -> root file
-	if (global_TF != "NO_TF") {
-		for (int i = 0 ; i < i_ramo_vector.size(); i++ ){
+	if (global_TF != "NO_TF")
+	{
+		for (int i = 0 ; i < i_ramo_vector.size(); i++ )
+		{
 
 		  std::cout << "Yes" << std::endl;
 			transferFun = global_TF;
@@ -181,18 +183,19 @@ int main( int argc, char *argv[]) {
 			htit2.Form("ramo_conv%d%d", 0, count2);
 			hname2.Form("Ramo_current_%d_%d", 0, count2);
 
-			for (int k = 0 ; k < timeSteps; k++ ){
+			for (int k = 0 ; k < timeSteps; k++ )
+			{
 
 				i_ramo->SetBinContent(k+1, vItotals[i][k]);
 
 			}
 			
-			TH1D *i_conv = H1DConvolution(i_ramo , capacitance*1.e12, count, transferFun);
+			i_conv = H1DConvolution(i_ramo , capacitance*1.e12, count, transferFun);
 
-
-			//******************************** D I R T Y   FIX : Shift histogram back !!! DELETE ME !!! *********************************************************************
-			//******************************** D I R T Y   FIX : Shift histogram back !!! DELETE ME !!! *********************************************************************
-			//******************************** D I R T Y   FIX : Shift histogram back !!! DELETE ME !!! *********************************************************************
+/*
+			******************************** D I R T Y   FIX : Shift histogram back !!! DELETE ME !!! *********************************************************************
+			******************************** D I R T Y   FIX : Shift histogram back !!! DELETE ME !!! *********************************************************************
+			******************************** D I R T Y   FIX : Shift histogram back !!! DELETE ME !!! *********************************************************************
 			Int_t Nbins = TMath::Nint( max_time/dTime ) ;
 			TH1D *hitf = new TH1D("hitf","hitf", Nbins ,0.,max_time) ;
 			Int_t istart = i_conv->FindBin( -20e-9) , iend=i_conv->FindBin( 20.e-9) ;
@@ -204,9 +207,11 @@ int main( int argc, char *argv[]) {
 			}
 			i_conv_vector[i] = hitf;
 
-			//****************************************************************************************************************************************************************
+			****************************************************************************************************************************************************************
 
+*/
 
+			i_conv_vector[i] = i_conv;
 			vItotals[i].resize(i_conv_vector[i]->GetNbinsX());
 			i_ramo = nullptr;
 			i_conv = nullptr;
@@ -216,8 +221,10 @@ int main( int argc, char *argv[]) {
 
 		}
 
-		for (int i = 0 ; i < i_conv_vector.size() ; i++){
-			for (int j = 0; j < i_conv_vector[i]->GetNbinsX(); j++  ){
+		for (int i = 0 ; i < i_conv_vector.size() ; i++)
+		{
+			for (int j = 0; j < i_conv_vector[i]->GetNbinsX(); j++  )
+			{
 				vItotals[i][j] = i_conv_vector[i]->GetBinContent(j+1);
 
 			}
@@ -252,13 +259,15 @@ int main( int argc, char *argv[]) {
 
 	//write output to single file!
 	TRACSsim[0]->write_to_file(0);
-	for (int i = 0 ; i < num_threads ; i++){
+	for (int i = 0 ; i < num_threads ; i++)
+	{
 		const char * c = carrierThread_fileNames[i].c_str();
 		remove(c);
 	}
 
 
-	for (uint i = 0; i < TRACSsim.size(); i++)	{
+	for (uint i = 0; i < TRACSsim.size(); i++)
+	{
 		delete TRACSsim[i];
 	}
 

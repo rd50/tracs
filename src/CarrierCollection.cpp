@@ -88,7 +88,7 @@ void CarrierCollection::add_carriers_from_file(const std::string& filename, cons
 			//std::cout << "Error while reading file" << std::endl;
 			break;
 		} 
-
+		extra_y = 0;
 		//Calculate average beam position
 		beamy += x_init;
 		beamz += y_init + extra_y;
@@ -167,16 +167,12 @@ void CarrierCollection::simulate_drift( double dt, double max_time, double shift
         }
         
         for (auto& carrier : *itr_queue )   // modified            
-        {               
+        {
+		std::array<double,2> x = carrier->get_x();       
             char carrier_type = carrier->get_carrier_type();  
             // simulate drift and add to proper valarray
             if (carrier_type == 'e')
             {                
-                // get and shift carrier position
-                std::array<double,2> x = carrier->get_x();     
-                x_init = x[0] + shift_x;
-                y_init = x[1] + shift_y;
-
                 //std::cout << "x[0]=" << x[0] << std::endl;
                 
                 //x[0] represents the X position read from the carriers file
@@ -186,26 +182,30 @@ void CarrierCollection::simulate_drift( double dt, double max_time, double shift
 
                 if( loop == 0 ) // Current made by initial carriers
                 {
+                	// get and shift carrier position
+                	x_init = x[0] + shift_x;
+                	y_init = x[1] + shift_y;
                     curr_elec += carrier->simulate_drift( dt , max_time, x_init, y_init, scanType,  gen_carrier_list); 
                 }
                 else                //  Current made by secondary carriers
                 {
+			x_init = x[0];
+                	y_init = x[1];
                     curr_gen_elec += carrier->simulate_drift( dt , max_time, x_init, y_init, scanType,  gen_carrier_list); 
                 }
             }            
             else if (carrier_type =='h')
             {
-                // get and shift carrier position
-                std::array<double,2> x = carrier->get_x();      
-                double x_init = x[0] + shift_x;
-                double y_init = x[1] + shift_y ;               
-
                 if( loop == 0 ) // Current made by initial carriers
                 {
+                	// get and shift carrier position
+                	x_init = x[0] + shift_x;
+                	y_init = x[1] + shift_y;
                     curr_hole += carrier->simulate_drift( dt , max_time, x_init, y_init, scanType,  gen_carrier_list);   
                 }
                 else
-                {
+                {	x_init = x[0];
+                	y_init = x[1];
                     curr_gen_hole += carrier->simulate_drift( dt , max_time, x_init, y_init, scanType,  gen_carrier_list);    
                 }
             }
